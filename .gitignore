@@ -1,0 +1,30 @@
+# ───────────── FRONTEND (Next.js) ─────────────
+/frontend/node_modules/
+/frontend/.next/
+/frontend/out/
+/frontend/build/
+/frontend/.vercel/
+/frontend/.env*
+/frontend/.pnp
+/frontend/.pnp.*
+/frontend/.DS_Store
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/.pnpm-debug.log*
+/frontend/*.tsbuildinfo
+/frontend/next-env.d.ts
+/frontend/.yarn/*
+!/frontend/.yarn/patches
+!/frontend/.yarn/plugins
+!/frontend/.yarn/releases
+!/frontend/.yarn/versions
+/frontend/coverage/
+
+# ───────────── SMART CONTRACTS (Foundry) ─────────────
+/smart-contracts/cache/
+/smart-contracts/out/
+/smart-contracts/docs/
+/smart-contracts/.env
+/smart-contracts/broadcast/*/31337/
+/smart-contracts/broadcast/**/dry-run/
