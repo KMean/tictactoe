@@ -21,7 +21,7 @@
   <a href="https://www.rainbowkit.com/">
     <img src="https://img.shields.io/badge/Wallet-RainbowKit-orange" alt="RainbowKit">
   </a>
-  <img src="https://img.shields.io/badge/Coverage-92%25-green" alt="Coverage">
+  <img src="https://img.shields.io/badge/Coverage-98%25-green" alt="Coverage">
 </p>
 
 
