@@ -1,6 +1,6 @@
 # 🕹️ TicTacToe On-Chain Game
 
-A fully decentralized two-player Tic Tac Toe game built on smart contracts with a modern frontend. Play, win, earn — all on-chain.
+A Simple yet fully decentralized two-player Tic Tac Toe game built on smart contracts with a modern frontend. Play, win, earn — all on-chain.
 
 ## 🧠 Features
 
