@@ -29,7 +29,6 @@ contract TicTacToeFullFuzz is Test {
         game = new TicTacToe(dev);
     }
 
-    /// Fuzz single valid move + ensure no overwrite
     function testFuzz_MoveOnce(uint8 x, uint8 y) public {
         x = x % 3;
         y = y % 3;
@@ -48,9 +47,7 @@ contract TicTacToeFullFuzz is Test {
         game.makeMove(gameId, x, y);
     }
 
-    /// Fuzz over illegal out-of-bounds
     function testFuzz_OutOfBounds(uint8 x, uint8 y) public {
-        // Force at least one coordinate out of bounds
         x = (x % 3) + 3;
         y = (y % 3) + 3;
 
@@ -65,10 +62,9 @@ contract TicTacToeFullFuzz is Test {
         game.makeMove(gameId, x, y);
     }
 
-    /// Fuzz joining with incorrect bet
     function testFuzz_InvalidJoinBet(uint256 fuzzBet) public {
         fuzzBet = bound(fuzzBet, 0.01 ether, 1 ether);
-        vm.assume(fuzzBet != 0.1 ether); // only invalid bets
+        vm.assume(fuzzBet != 0.1 ether);
 
         vm.prank(player1);
         uint256 gameId = game.createGame{value: 0.1 ether}(TicTacToe.Player.X);
@@ -84,15 +80,14 @@ contract TicTacToeFullFuzz is Test {
         uint8 timeoutAfter,
         bool creatorStarts
     ) public {
-        // Setup
         vm.prank(player1);
         uint256 gameId = game.createGame{value: 0.1 ether}(creatorStarts ? TicTacToe.Player.X : TicTacToe.Player.O);
 
         if (cancelAfter == 0) {
             vm.prank(player1);
             game.cancelGame(gameId);
-            (, , , , , TicTacToe.GameState state, , ) = game.games(gameId);
-            assertEq(uint8(state), uint8(TicTacToe.GameState.Canceled));
+            TicTacToe.Game memory g0 = game.getGameState(gameId);
+            assertEq(uint8(g0.state), uint8(TicTacToe.GameState.Canceled));
             return;
         }
 
@@ -115,8 +110,8 @@ contract TicTacToeFullFuzz is Test {
                 vm.warp(block.timestamp + game.timeoutPeriod() + 1);
                 vm.prank(other);
                 try game.claimWinByTimeout(gameId) {} catch {}
-                (, , , , , TicTacToe.GameState state, , ) = game.games(gameId);
-                assertEq(uint8(state), uint8(TicTacToe.GameState.Finished));
+                TicTacToe.Game memory g1 = game.getGameState(gameId);
+                assertEq(uint8(g1.state), uint8(TicTacToe.GameState.Finished));
                 return;
             }
 
@@ -125,8 +120,8 @@ contract TicTacToeFullFuzz is Test {
             vm.prank(current);
             try game.makeMove(gameId, x, y) {
                 played[x][y] = true;
-                (, , , , , TicTacToe.GameState state, , ) = game.games(gameId);
-                if (state == TicTacToe.GameState.Finished) return;
+                TicTacToe.Game memory g2 = game.getGameState(gameId);
+                if (g2.state == TicTacToe.GameState.Finished) return;
             } catch {
                 break;
             }
@@ -138,22 +133,12 @@ contract TicTacToeFullFuzz is Test {
             }
         }
 
-        (, , , , , TicTacToe.GameState finalState, , ) = game.games(gameId);
-        assertTrue(finalState == TicTacToe.GameState.Finished || finalState == TicTacToe.GameState.InProgress);
+        TicTacToe.Game memory g = game.getGameState(gameId);
+        assertTrue(g.state == TicTacToe.GameState.Finished || g.state == TicTacToe.GameState.InProgress);
     }
 
     function getCurrentPlayer(uint256 gameId) internal view returns (address) {
-        (
-            address payable creator,
-            address payable opponent,
-            TicTacToe.Player creatorSymbol,
-            TicTacToe.Player turn,
-            , // bet
-            , // state
-            , // winner
-            // lastMoveTime is also ignored
-        ) = game.games(gameId);
-
-        return turn == creatorSymbol ? creator : opponent;
+        TicTacToe.Game memory g = game.getGameState(gameId);
+        return g.turn == g.creatorSymbol ? g.creator : g.opponent;
     }
 }
