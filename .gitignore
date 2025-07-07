@@ -26,5 +26,4 @@
 /smart-contracts/out/
 /smart-contracts/docs/
 /smart-contracts/.env
-/smart-contracts/broadcast/*/31337/
-/smart-contracts/broadcast/**/dry-run/
+/smart-contracts/broadcast/
